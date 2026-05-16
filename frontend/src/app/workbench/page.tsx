@@ -10,10 +10,12 @@ interface ZyncResponse {
     active_policies_enforced: number;
   };
   policy_evaluation: {
-    brand_safety_score: string;
-    competitor_mention_blocked: boolean;
-    unverified_claims_flagged: boolean;
-    tone_alignment: string;
+    brand_safety_score?: string;
+    competitor_mention_blocked?: boolean;
+    unverified_claims_flagged?: boolean;
+    tone_alignment?: string;
+    status?: string;
+    reason?: string;
   };
   agent_execution_logs: {
     [key: string]: { status: string; latency_ms: number; capability_used: string };
@@ -48,13 +50,13 @@ export default function Workbench() {
       // 🎯 EXCEPTION PATH
       if (niche.toLowerCase().includes("broken") || niche.toLowerCase().includes("error")) {
         await new Promise((resolve) => setTimeout(resolve, 1200));
-        throw new Error("ERR_CORE_CAPABILITY_TIMEOUT: Supervity Headless Deep-Research Agent failed to resolve asset DNS within 5000ms.");
+        throw new Error("ERR_CORE_CAPABILITY_TIMEOUT: Supervity Headless Web-Search pipeline failed to resolve target asset within execution threshold.");
       }
 
       // Simulating real agent pipeline processing time
       await new Promise((resolve) => setTimeout(resolve, 1500));
 
-      // Standard Happy Path Structure with Detailed Metrics and Logs
+      // Standard Happy Path Structure
       const mockEnhancedData: ZyncResponse = {
         status: "READY_FOR_DEPLOYMENT",
         metrics: {
@@ -69,10 +71,10 @@ export default function Workbench() {
           tone_alignment: "Professional Growth-Oriented"
         },
         agent_execution_logs: {
-          "1_Trend_Researcher": { status: "COMPLETED", latency_ms: 450, capability_used: "Supervity Headless Web-Search & Pattern Mining" },
-          "2_Brand_Safety_Guard": { status: "COMPLETED", latency_ms: 310, capability_used: "Dynamic Regex Policy Matching Engine" },
-          "3_Creative_Copywriter": { status: "COMPLETED", latency_ms: 380, capability_used: "Contextual LLM Generation" },
-          "4_ROI_Deployment_Strategist": { status: "COMPLETED", latency_ms: 280, capability_used: "Predictive Analytics Scheduler" }
+          "1_Zync_Multi_Channel_Content (Research Phase)": { status: "COMPLETED", latency_ms: 450, capability_used: "Supervity Headless Web-Search & Deep Research" },
+          "2_Zync_Brand_Safety_Evaluator": { status: "COMPLETED", latency_ms: 310, capability_used: "Dynamic Corporate Policy Guardrails" },
+          "3_Zync_Multi_Channel_Content (Generation Phase)": { status: "COMPLETED", latency_ms: 380, capability_used: "Contextual Multi-Platform Copy Generator" },
+          "4_Zync_Content_Publisher": { status: "COMPLETED", latency_ms: 280, capability_used: "Automated Scheduler & API Distribution Hub" }
         },
         distribution: {
           twitter: {
@@ -91,27 +93,27 @@ export default function Workbench() {
       const errorMessage = err instanceof Error ? err.message : "Unknown socket connection failure.";
       setIsException(true);
       
+      // ⚡ Optimized Real-World Failure Payload
       setApiResponse({
         status: "CRITICAL_EXCEPTION_HANDLED",
         metrics: {
           niche_processed: niche,
           total_pipeline_latency_ms: 1200,
-          active_policies_enforced: 3
+          active_policies_enforced: 0
         },
         policy_evaluation: {
-          brand_safety_score: "ERR/100",
-          competitor_mention_blocked: false,
-          unverified_claims_flagged: false,
-          tone_alignment: "UNDEFINED"
+          status: "NOT_EXECUTED",
+          reason: "UPSTREAM_CORE_CAPABILITY_TIMEOUT"
         },
         agent_execution_logs: {
-          "1_Trend_Researcher": { status: "FAILED", latency_ms: 1200, capability_used: "Supervity Headless Web-Search" },
-          "2_Brand_Safety_Guard": { status: "SKIPPED", latency_ms: 0, capability_used: "N/A" },
-          "3_Creative_Copywriter": { status: "SKIPPED", latency_ms: 0, capability_used: "N/A" }
+          "1_Zync_Multi_Channel_Content (Research Phase)": { status: "FAILED", latency_ms: 1200, capability_used: "Supervity Headless Web-Search Gateway" },
+          "2_Zync_Brand_Safety_Evaluator": { status: "BLOCKED_DEPENDENCY_FAILURE", latency_ms: 0, capability_used: "N/A" },
+          "3_Zync_Multi_Channel_Content (Generation Phase)": { status: "BLOCKED_DEPENDENCY_FAILURE", latency_ms: 0, capability_used: "N/A" },
+          "4_Zync_Content_Publisher": { status: "BLOCKED_DEPENDENCY_FAILURE", latency_ms: 0, capability_used: "N/A" }
         },
         pipeline_governance: {
           error_trace: errorMessage,
-          action: "Automated pipeline production deployment frozen instantly.",
+          action: "Automated pipeline production deployment frozen instantly to secure system runtime.",
           routing_target: "State payload successfully serialized and routed to Supervity Human-in-Command Hub."
         },
         distribution: {}
@@ -174,7 +176,6 @@ export default function Workbench() {
         )}
       </div>
 
-      {/* Grid Modules */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <div className="bg-white border border-slate-200 p-5 rounded-2xl shadow-sm flex flex-col justify-between">
           <div>
