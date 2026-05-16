@@ -44,7 +44,7 @@ from .routers import (
     items_router,
 )
 from .security import get_current_user, verify_access
-
+from app.routers.marketing import router as marketing_router
 log = logging.getLogger(__name__)
 
 # =============================================================================
@@ -154,6 +154,8 @@ api_router.include_router(items_router)
 # Authorization pattern examples
 api_router.include_router(examples_router)
 
+# Zync Autonomous Marketing Pipeline Router
+api_router.include_router(marketing_router)
 
 # =============================================================================
 # FILE STORAGE ENDPOINTS (kept inline for path matching order)
