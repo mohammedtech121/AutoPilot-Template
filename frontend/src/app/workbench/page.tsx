@@ -4,12 +4,12 @@ import { useState } from "react";
 
 interface ZyncResponse {
   status: string;
-  metrics: {
+  metrics?: {
     niche_processed: string;
     total_pipeline_latency_ms: number;
     active_policies_enforced: number;
   };
-  policy_evaluation: {
+  policy_evaluation?: {
     brand_safety_score?: string;
     competitor_mention_blocked?: boolean;
     unverified_claims_flagged?: boolean;
@@ -17,10 +17,10 @@ interface ZyncResponse {
     status?: string;
     reason?: string;
   };
-  agent_execution_logs: {
+  agent_execution_logs?: {
     [key: string]: { status: string; latency_ms: number; capability_used: string };
   };
-  distribution: {
+  distribution?: {
     [key: string]: { content: string; scheduled_utc: string };
   };
   pipeline_governance?: {
@@ -28,6 +28,9 @@ interface ZyncResponse {
     action: string;
     routing_target: string;
   };
+  error_code?: string;
+  reason?: string;
+  deployment_authorized?: boolean;
 }
 
 export default function Workbench() {
@@ -36,6 +39,7 @@ export default function Workbench() {
   const [apiResponse, setApiResponse] = useState<ZyncResponse | null>(null);
   const [isException, setIsException] = useState<boolean>(false);
   const [isViolation, setIsViolation] = useState<boolean>(false);
+  const [isInvalid, setIsInvalid] = useState<boolean>(false);
 
   const runZyncEngine = async () => {
     if (!niche) {
@@ -47,6 +51,22 @@ export default function Workbench() {
     setApiResponse(null);
     setIsException(false);
     setIsViolation(false);
+    setIsInvalid(false);
+
+    // 🛡️ PATH 0: GARBAGE INPUT VALIDATION GATE
+    const meaningfulLetters = niche.replace(/[^a-zA-Z]/g, "").length;
+    if (meaningfulLetters < 3) {
+      await new Promise((resolve) => setTimeout(resolve, 600)); // Slick realistic evaluation delay
+      setIsInvalid(true);
+      setApiResponse({
+        status: "INVALID_INPUT_REJECTED",
+        error_code: "INPUT_VALIDATION_FAILED",
+        reason: "Campaign request contains no meaningful business context or alphabetic words.",
+        deployment_authorized: false
+      });
+      setIsProcessing(false);
+      return;
+    }
 
     const inputLower = niche.toLowerCase();
 
@@ -199,9 +219,9 @@ export default function Workbench() {
         </div>
 
         {apiResponse && (
-          <div className={`mt-6 rounded-xl border p-4 transition-all ${isException || isViolation ? 'border-red-200 bg-red-50/50' : 'border-green-200 bg-green-50/50'}`}>
+          <div className={`mt-6 rounded-xl border p-4 transition-all ${isException || isViolation || isInvalid ? 'border-red-200 bg-red-50/50' : 'border-green-200 bg-green-50/50'}`}>
             <div className="flex items-center justify-between mb-3">
-              <span className={`text-sm font-bold tracking-wide uppercase ${isException || isViolation ? 'text-red-700' : 'text-green-700'}`}>
+              <span className={`text-sm font-bold tracking-wide uppercase ${isException || isViolation || isInvalid ? 'text-red-700' : 'text-green-700'}`}>
                 Engine Status: {apiResponse.status}
               </span>
             </div>
