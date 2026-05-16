@@ -3,7 +3,7 @@ from pydantic import BaseModel
 from app.services.marketing import marketing_service
 
 # API Endpoint ka route prefix aur tags set karna
-router = APIRouter(prefix="/api/marketing", tags=["Zync Marketing"])
+router = APIRouter(prefix="/marketing", tags=["Zync Marketing"])
 
 # Frontend se aane waale data ka structure validation
 class CampaignRequest(BaseModel):
