@@ -56,7 +56,7 @@ export default function Workbench() {
     // 🛡️ PATH 0: GARBAGE INPUT VALIDATION GATE
     const meaningfulLetters = niche.replace(/[^a-zA-Z]/g, "").length;
     if (meaningfulLetters < 3) {
-      await new Promise((resolve) => setTimeout(resolve, 600)); // Slick realistic evaluation delay
+      await new Promise((resolve) => setTimeout(resolve, 600)); 
       setIsInvalid(true);
       setApiResponse({
         status: "INVALID_INPUT_REJECTED",
@@ -240,7 +240,12 @@ export default function Workbench() {
             <h3 className="font-bold text-slate-800 text-base mb-1">AI Assistant</h3>
             <p className="text-xs text-slate-500 leading-normal mb-6">Chat with your AI assistant for help with operational workflows.</p>
           </div>
-          <button className="w-full bg-[#0f172a] hover:bg-slate-800 text-white font-medium text-xs py-2.5 rounded-xl transition-all">Open Tool &rarr;</button>
+          <button 
+            onClick={() => window.open("https://auto.supervity.ai", "_blank")}
+            className="w-full bg-[#0f172a] hover:bg-slate-800 text-white font-medium text-xs py-2.5 rounded-xl transition-all"
+          >
+            Open Tool &rarr;
+          </button>
         </div>
 
         <div className="bg-white border border-slate-200 p-5 rounded-2xl shadow-sm flex flex-col justify-between">
@@ -249,7 +254,12 @@ export default function Workbench() {
             <h3 className="font-bold text-slate-800 text-base mb-1">Automation Builder</h3>
             <p className="text-xs text-slate-500 leading-normal mb-6">Create, manage, and configure stateful automated workflows.</p>
           </div>
-          <button className="w-full bg-[#0f172a] hover:bg-slate-800 text-white font-medium text-xs py-2.5 rounded-xl transition-all">Open Tool &rarr;</button>
+          <button 
+            onClick={() => window.open("https://auto.supervity.ai", "_blank")}
+            className="w-full bg-[#0f172a] hover:bg-slate-800 text-white font-medium text-xs py-2.5 rounded-xl transition-all"
+          >
+            Open Tool &rarr;
+          </button>
         </div>
 
         <div className="bg-white border border-slate-200 p-5 rounded-2xl shadow-sm opacity-70 relative flex flex-col justify-between">
