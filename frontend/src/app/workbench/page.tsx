@@ -35,6 +35,7 @@ export default function Workbench() {
   const [isProcessing, setIsProcessing] = useState<boolean>(false);
   const [apiResponse, setApiResponse] = useState<ZyncResponse | null>(null);
   const [isException, setIsException] = useState<boolean>(false);
+  const [isViolation, setIsViolation] = useState<boolean>(false);
 
   const runZyncEngine = async () => {
     if (!niche) {
@@ -45,18 +46,55 @@ export default function Workbench() {
     setIsProcessing(true);
     setApiResponse(null);
     setIsException(false);
+    setIsViolation(false);
+
+    const inputLower = niche.toLowerCase();
 
     try {
-      // 🎯 EXCEPTION PATH
-      if (niche.toLowerCase().includes("broken") || niche.toLowerCase().includes("error")) {
+      // 🔴 PATH 1: TECHNICAL EXCEPTION (Type "error" or "broken")
+      if (inputLower.includes("broken") || inputLower.includes("error")) {
         await new Promise((resolve) => setTimeout(resolve, 1200));
         throw new Error("ERR_CORE_CAPABILITY_TIMEOUT: Supervity Headless Web-Search pipeline failed to resolve target asset within execution threshold.");
       }
 
-      // Simulating real agent pipeline processing time
+      // ⚠️ PATH 2: POLICY VIOLATION INTERCEPT (Type "violation" or "starbucks")
+      if (inputLower.includes("violation") || inputLower.includes("starbuck") || inputLower.includes("mcdonald")) {
+        await new Promise((resolve) => setTimeout(resolve, 1400));
+        
+        setIsViolation(true);
+        setApiResponse({
+          status: "DEPLOYMENT_BLOCKED_BY_GOVERNANCE",
+          metrics: {
+            niche_processed: niche,
+            total_pipeline_latency_ms: 760,
+            active_policies_enforced: 3
+          },
+          policy_evaluation: {
+            status: "FAILED_COMPLIANCE_AUDIT",
+            brand_safety_score: "42/100 (CRITICAL_FAIL)",
+            competitor_mention_blocked: true,
+            unverified_claims_flagged: true,
+            tone_alignment: "REJECTED - Restricted competitor trade-tokens or unauthorized pricing claims detected."
+          },
+          agent_execution_logs: {
+            "1_Zync_Multi_Channel_Content (Research Phase)": { status: "COMPLETED", latency_ms: 450, capability_used: "Supervity Headless Web-Search" },
+            "2_Zync_Brand_Safety_Evaluator": { status: "FAILED_COMPLIANCE_CHECK", latency_ms: 310, capability_used: "Dynamic Corporate Policy Guardrails" },
+            "3_Zync_Multi_Channel_Content (Generation Phase)": { status: "SKIPPED_BY_GOVERNANCE", latency_ms: 0, capability_used: "N/A" },
+            "4_Zync_Content_Publisher": { status: "SKIPPED_BY_GOVERNANCE", latency_ms: 0, capability_used: "N/A" }
+          },
+          pipeline_governance: {
+            error_trace: "POLICY_VIOLATION: Restricted competitive keyword entities detected during active scraping phase.",
+            action: "Automated distribution sequences frozen instantly to protect brand compliance standards.",
+            routing_target: "Payload quarantined and routed to Supervity Compliance Workbench for manual human-in-the-loop override."
+          },
+          distribution: {}
+        });
+        return;
+      }
+
+      // 🟢 PATH 3: STANDARD HAPPY PATH
       await new Promise((resolve) => setTimeout(resolve, 1500));
 
-      // Standard Happy Path Structure
       const mockEnhancedData: ZyncResponse = {
         status: "READY_FOR_DEPLOYMENT",
         metrics: {
@@ -93,7 +131,6 @@ export default function Workbench() {
       const errorMessage = err instanceof Error ? err.message : "Unknown socket connection failure.";
       setIsException(true);
       
-      // ⚡ Optimized Real-World Failure Payload
       setApiResponse({
         status: "CRITICAL_EXCEPTION_HANDLED",
         metrics: {
@@ -140,7 +177,7 @@ export default function Workbench() {
           <input
             type="text"
             className="flex-1 px-4 py-3 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm transition-all"
-            placeholder="e.g., Zync Studio / Amigos Cafeteria"
+            placeholder="e.g., Zync Studio / Amigos Cafeteria / Starbucks"
             value={niche}
             onChange={(e) => setNiche(e.target.value)}
             disabled={isProcessing}
@@ -162,9 +199,9 @@ export default function Workbench() {
         </div>
 
         {apiResponse && (
-          <div className={`mt-6 rounded-xl border p-4 transition-all ${isException ? 'border-red-200 bg-red-50/50' : 'border-green-200 bg-green-50/50'}`}>
+          <div className={`mt-6 rounded-xl border p-4 transition-all ${isException || isViolation ? 'border-red-200 bg-red-50/50' : 'border-green-200 bg-green-50/50'}`}>
             <div className="flex items-center justify-between mb-3">
-              <span className={`text-sm font-bold tracking-wide uppercase ${isException ? 'text-red-700' : 'text-green-700'}`}>
+              <span className={`text-sm font-bold tracking-wide uppercase ${isException || isViolation ? 'text-red-700' : 'text-green-700'}`}>
                 Engine Status: {apiResponse.status}
               </span>
             </div>
